@@ -29,7 +29,7 @@ class Logger(object):
         self.__logger.addHandler(file_handler)
         self.__logger.addHandler(console_handler)
 
-    def __get_log(self):
+    def get_log(self):
         return self.__logger
 
 def count_parameters(model):
