@@ -4,7 +4,7 @@ architecture: densenet100bc
 #log and checkpoint
 data_path: ./data
 ckpt_path: ./
-ckpt_path: densenet100bc
+ckpt_name: densenet100bc
 
 #datasets
 num_classes: 10
