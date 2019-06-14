@@ -41,6 +41,9 @@ This repository uses Pytorch to implement the popular CNN architectures, using t
   ##2 GPUs for resnet1202  
   CUDA_VISIBLE_DEVICES=0,1 python -u train.py --work-path ./experiments/cifar10/preresnet20  
   ##4 GPUs for densenet190bc  
-  CUDA_VISIBLE_DEVICES=0,1,2,3 python -u train.py --work-path ./experiments/cifar10/densenet100bc
+  CUDA_VISIBLE_DEVICES=0,1,2,3 python -u train.py --work-path ./experiments/cifar10/densenet100bc  
+  
+Feel free to contact me if you have any suggestions or questions, issues are welcome,
+create a PR if you find any bugs or you want to contribute.:smile:
 
 
