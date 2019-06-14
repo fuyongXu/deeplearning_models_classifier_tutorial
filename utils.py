@@ -33,7 +33,7 @@ class Logger(object):
         return self.__logger
 
 def count_parameters(model):
-    return sum(p.numel() for p in model.parameters() if p.required_grad)    #numel()函数：返回数组中元素的个数
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)    #numel()函数：返回数组中元素的个数
 
 def data_augmentation(config,is_train=True):
     aug = []
@@ -112,26 +112,26 @@ def load_checkpoint(path,model,optimizer=None):
 
             return best_prec,last_epoch
 
-def get_data_loader(transform_train,transform_test,config):
+def get_data_loader(transform_train, transform_test, config):
     assert config.dataset == 'cifar10' or config.dataset == 'cifar100'
     if config.dataset == 'cifar10':
         trainset = torchvision.datasets.CIFAR10(
-            root=config.data_path,train=True,transform=transform_train,download=True
+            root=config.data_path, train=True, transform=transform_train, download=True
         )
         testset = torchvision.datasets.CIFAR10(
-            root=config.data_path,train=False,transform=transform_test,download=True)
+            root=config.data_path, train=False, transform=transform_test, download=True)
     else:
         trainset = torchvision.datasets.CIFAR100(
-            root=config.data_path,train=True,transform=transform_train,download=True
+            root=config.data_path, train=True, transform=transform_train, download=True
         )
         testset = torchvision.datasets.CIFAR100(
-            root=config.data_path,train=False,transform=transform_test,download=True
+            root=config.data_path, train=False, transform=transform_test, download=True
         )
 
     train_loader = Data.DataLoader(
-        trainset,batch_size=config.batch_size,shuffle=True,num_workers=config.workers)
+        trainset, batch_size=config.batch_size, shuffle=True, num_workers=config.workers)
     test_loader = Data.DataLoader(
-        testset,batch_size=config.test_batch,shuffle=True,num_workers=config.workers)
+        testset, batch_size=config.test_batch, shuffle=True, num_workers=config.workers)
     return train_loader, test_loader
 
 def mixup_data(x,y,alpha,device):

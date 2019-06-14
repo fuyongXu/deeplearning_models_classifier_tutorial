@@ -44,7 +44,7 @@ def train(train_loader,net,criterion,optimizer,epoch,device):
         #zero the gradient buffers
         optimizer.zero_grad()
         #backward()
-        loss.backword()
+        loss.backward()
         #update weight
         optimizer.step()
 
