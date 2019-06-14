@@ -26,4 +26,21 @@ This repository uses Pytorch to implement the popular CNN architectures, using t
 * (cos_lr) [SGDR: Stochastic Gradient Descent with Warm Restarts](https://arxiv.org/abs/1608.03983)
 * (htd_lr) [Stochastic Gradient Descent with Hyperbolic-Tangent Decay on Classification](https://arxiv.org/abs/1806.01593)
 
+## Requirements
+*  Python >= 3.5
+* PyTorch = 0.4 or 1.0
+* Tensorboard (if you want to use the tensorboard for visualization)
+* pyyaml, easydict, tensorboardX
+
+## Usage
+  Run the command for training as following:
+  >##1 GPU for lenet  
+  python -u train.py --work-path ./experiments/cifar10/lenet  
+  ##resume from checkpoint
+  python -u train.py --work-path ./experiments/cifar10/lenet --resume  
+  ##2 GPUs for resnet1202  
+  CUDA_VISIBLE_DEVICES=0,1 python -u train.py --work-path ./experiments/cifar10/preresnet20  
+  ##4 GPUs for densenet190bc  
+  CUDA_VISIBLE_DEVICES=0,1,2,3 python -u train.py --work-path ./experiments/cifar10/densenet100bc
+
 
