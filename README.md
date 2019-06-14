@@ -16,3 +16,14 @@ This repository uses Pytorch to implement the popular CNN architectures, using t
  * (sknet) [SKNet: Selective Kernel Networks](https://arxiv.org/abs/1903.06586)
  * (mobilenetV1)[MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications](https://arxiv.org/abs/1704.04861?context=cs)
  * (mobilenetV2)[MobileNetV2: Inverted Residuals and Linear Bottlenecks](https://arxiv.org/abs/1801.04381)
+ 
+ ## Regularization
+ * (shake-shake) [Shake-Shake regularization](https://arxiv.org/abs/1705.07485)
+ * (cutout) [Improved Regularization of Convolutional Neural Networks with Cutout](https://arxiv.org/abs/1708.04552)
+ * (mixup) [mixup: Beyond Empirical Risk Minimization](https://arxiv.org/abs/1710.09412)
+
+## Learning Rate Scheduler
+* (cos_lr) [SGDR: Stochastic Gradient Descent with Warm Restarts](https://arxiv.org/abs/1608.03983)
+* (htd_lr) [Stochastic Gradient Descent with Hyperbolic-Tangent Decay on Classification](https://arxiv.org/abs/1806.01593)
+
+
