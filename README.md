@@ -36,7 +36,7 @@ This repository uses Pytorch to implement the popular CNN architectures, using t
   Run the command for training as following:
   >##1 GPU for lenet  
   python -u train.py --work-path ./experiments/cifar10/lenet  
-  ##resume from checkpoint
+  ##resume from checkpoint  
   python -u train.py --work-path ./experiments/cifar10/lenet --resume  
   ##2 GPUs for resnet1202  
   CUDA_VISIBLE_DEVICES=0,1 python -u train.py --work-path ./experiments/cifar10/preresnet20  
