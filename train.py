@@ -15,14 +15,15 @@ from models import *
 from utils import *
 
 parser = argparse.ArgumentParser(description="Pytorch_Image_classifier_tutorial")
-parser.add_argument('--work-path',required=True,type=str)
-parser.add_argument('--resume',action='store_true',help='resume from checkpoint')
+parser.add_argument('--work-path', required=True, type=str)
+parser.add_argument('--resume', action='store_true', help='resume from checkpoint')
 
 args = parser.parse_args()
-logger = Logger(log_file_name=args.work_path+'/log.txt',log_level=logging.DEBUG,logger_name='CIFAR').get_log()
+logger = Logger(log_file_name=args.work_path + '/log.txt', log_level=logging.DEBUG, logger_name='CIFAR').get_log()
 
-def train(train_loader,net,criterion,optimizer,epoch,device):
-    global writer       #创建一个SummaryWriter实例
+
+def train(train_loader, net, criterion, optimizer, epoch, device):
+    global writer  # 创建一个SummaryWriter实例
 
     start = time.time()
     net.train()
@@ -30,52 +31,56 @@ def train(train_loader,net,criterion,optimizer,epoch,device):
     train_loss = 0
     correct = 0
     total = 0
-    logger.info("===Epoch:[{}/{}]===".format(epoch+1,config.epochs))
-    for batch_index,(inputs,targets) in enumerate(train_loader):
-        inputs,targets = inputs.to(device),targets.to(device)
+    logger.info("===Epoch:[{}/{}]===".format(epoch + 1, config.epochs))
+    for batch_index, (inputs, targets) in enumerate(train_loader):
+        inputs, targets = inputs.to(device), targets.to(device)
         if config.mixup:
-            inputs,targets_a,targets_b,lam = mixup_data(inputs,targets,config.mixup_alpha,device)
+            inputs, targets_a, targets_b, lam = mixup_data(inputs, targets, config.mixup_alpha, device)
             outputs = net(inputs)
-            loss = mixup_criterion(criterion,outputs,targets_a,targets_b,lam)
+            loss = mixup_criterion(criterion, outputs, targets_a, targets_b, lam)
         else:
             outputs = net(inputs)
-            loss = criterion(outputs,targets)
+            loss = criterion(outputs, targets)
 
-        #zero the gradient buffers
+        # zero the gradient buffers
         optimizer.zero_grad()
-        #backward()
+        # backward()
         loss.backward()
-        #update weight
+        # update weight
         optimizer.step()
 
-        #count the loss and acc
+        # count the loss and acc
         train_loss += loss.item()
-        _,predicted = outputs.max(1)            #这里_代表我们不关心的部分，而我们关系predicted部分。这部分对应了所属Label的索引https://cloud.tencent.com/developer/article/1433941
+        _, predicted = outputs.max(
+            1)  # 这里_代表我们不关心的部分，而我们关系predicted部分。这部分对应了所属Label的索引https://cloud.tencent.com/developer/article/1433941
         total += targets.size(0)
         if config.mixup:
-            correct += (lam*predicted.eq(targets_a).sum().item()+(1-lam)*predicted.eq(targets_b).sum().item())
+            correct += (lam * predicted.eq(targets_a).sum().item() + (1 - lam) * predicted.eq(targets_b).sum().item())
         else:
             correct += predicted.eq(targets).sum().item()
 
-        if(batch_index + 1) %100 == 0:
+        if (batch_index + 1) % 100 == 0:
             logger.info("  === step:[{:3}/{}],train_loss:{:.3f}|train_acc:{:6.3f}%|lr:{:.6f}".format(
-                batch_index+1,len(train_loader),train_loss/(batch_index+1),100*correct/total,get_current_lr(optimizer)
+                batch_index + 1, len(train_loader), train_loss / (batch_index + 1), 100 * correct / total,
+                get_current_lr(optimizer)
             ))
     logger.info("  ===step:[{:3}/{}],train_loss:{:.3f}|train_acc:{:6.3f}%|lr:{:.6f}".format(
-        batch_index+1,len(train_loader),train_loss/(batch_index+1),100.0*correct/total,get_current_lr(optimizer)
+        batch_index + 1, len(train_loader), train_loss / (batch_index + 1), 100.0 * correct / total,
+        get_current_lr(optimizer)
     ))
 
-    end  = time.time()
-    logger.info("  ===cost time:{:.4f}s".format(end-start))
-    train_loss = train_loss/(batch_index+1)
-    train_acc = correct/total
+    end = time.time()
+    logger.info("  ===cost time:{:.4f}s".format(end - start))
+    train_loss = train_loss / (batch_index + 1)
+    train_acc = correct / total
 
-    writer.add_scalar('train_loss',train_loss,epoch)
-    writer.add_scalar('train_acc',train_acc,epoch)
+    writer.add_scalar('train_loss', train_loss, epoch)
+    writer.add_scalar('train_acc', train_acc, epoch)
 
-    return train_loss,train_acc
+    return train_loss, train_acc
 
-#val
+
+# val
 def test(test_loader, net, criterion, optimizer, epoch, device):
     global best_prec, writer
 
@@ -85,7 +90,7 @@ def test(test_loader, net, criterion, optimizer, epoch, device):
     correct = 0
     total = 0
 
-    logger.info("===== Validate =====".format(epoch+1,config.epochs))
+    logger.info("===== Validate =====".format(epoch + 1, config.epochs))
 
     with torch.no_grad():
         for batch_index, (inputs, targets) in enumerate(test_loader):
@@ -94,18 +99,18 @@ def test(test_loader, net, criterion, optimizer, epoch, device):
             loss = criterion(outputs, targets)
 
             test_loss += loss.item()
-            _,predicted = outputs.max(1)
+            _, predicted = outputs.max(1)
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
 
-    logger.info("  ===test loss:{:.3f}|test acc{:6.3f}%".format(test_loss/(batch_index + 1), 100.0*correct/total))
+    logger.info("  ===test loss:{:.3f}|test acc{:6.3f}%".format(test_loss / (batch_index + 1), 100.0 * correct / total))
     test_loss = test_loss / (batch_index + 1)
     test_acc = correct / total
     writer.add_scalar('test_loss', test_loss, epoch)
     writer.add_scalar('test_acc', test_acc, epoch)
 
-    #Save checkpoint
-    acc = 100.*correct/total
+    # Save checkpoint
+    acc = 100. * correct / total
     state = {
         'state_dict': net.state_dict(),
         'best_prec': best_prec,
@@ -120,45 +125,45 @@ def test(test_loader, net, criterion, optimizer, epoch, device):
 
 def main():
     global args, config, last_epoch, best_prec, writer
-    writer = SummaryWriter(logdir=args.work_path+'/event')
+    writer = SummaryWriter(logdir=args.work_path + '/event')
 
-    #read config from yaml file
+    # read config from yaml file
     with open(args.work_path + '/config.yaml') as f:
         config = yaml.load(f)
 
-    #convert to dict
-    config = EasyDict(config)           #easydict的作用：可以使得以属性的方式去访问字典的值
+    # convert to dict
+    config = EasyDict(config)  # easydict的作用：可以使得以属性的方式去访问字典的值
     logger.info(config)
 
-    #denfine net
+    # denfine net
     net = get_model(config)
     logger.info(net)
     logger.info("===total parameters:" + str(count_parameters(net)))
 
-    #GPU or CPU
+    # GPU or CPU
     device = 'cuda' if config.use_gpu else 'cpu'
-    #data parallel for multiple-GPU
+    # data parallel for multiple-GPU
     if device == 'cuda':
         net = torch.nn.DataParallel(net)
         cudnn.benchmark = True
     net.to(device)
 
-    #define loss and optimizer
+    # define loss and optimizer
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(net.parameters(),config.lr_scheduler.base_lr,
+    optimizer = torch.optim.SGD(net.parameters(), config.lr_scheduler.base_lr,
                                 momentum=config.optimize.momentum,
                                 weight_decay=config.optimize.weight_decay,
                                 nesterov=config.optimize.nesterov)
 
-    #resume from a checkpoint
+    # resume from a checkpoint
     last_epoch = -1
     best_prec = 0
     if args.work_path:
         ckpt_file_name = args.work_path + '/' + config.ckpt_name + '.pth.tar'
         if args.resume:
-            best_prec,last_epoch = load_checkpoint(ckpt_file_name,net,optimizer)
+            best_prec, last_epoch = load_checkpoint(ckpt_file_name, net, optimizer)
 
-    #load training data,do data augmentation and get data loader
+    # load training data,do data augmentation and get data loader
     transform_train = transforms.Compose(
         data_augmentation(config)
     )
@@ -166,17 +171,18 @@ def main():
         data_augmentation(config, is_train=False)
     )
 
-    train_loader, test_loader = get_data_loader(transform_train,transform_test,config)
+    train_loader, test_loader = get_data_loader(transform_train, transform_test, config)
 
-    #start training
+    # start training
     logger.info("        =======  start  training   ======     ")
-    for epoch in range(last_epoch+1,config.epochs):
+    for epoch in range(last_epoch + 1, config.epochs):
         lr = adjust_learning_rate(optimizer, epoch, config)
         writer.add_scalar('learning_rate', lr, epoch)
         train(train_loader, net, criterion, optimizer, epoch, device)
         if epoch == 0 or (epoch + 1) % config.eval_freq == 0 or epoch == config.epochs - 1:
             test(test_loader, net, criterion, optimizer, epoch, device)
     logger.info("=====Training Finished.   best_test_acc:{:.3f}%====".format(best_prec))
+
 
 if __name__ == "__main__":
     main()
