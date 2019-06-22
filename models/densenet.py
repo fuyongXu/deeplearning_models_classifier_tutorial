@@ -17,7 +17,7 @@ class Bottleneck(nn.Module):
 
     def forward(self,x):
         out = self.conv_1(F.relu(self.bn_1(x)))
-        out = self.conv_2(F.relu(self.bn_2(x)))
+        out = self.conv_2(F.relu(self.bn_2(out)))
         out = torch.cat([out,x], 1)
         return out
 

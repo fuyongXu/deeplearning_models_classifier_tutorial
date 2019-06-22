@@ -5,6 +5,8 @@ from .vgg import *
 from .resnet import *
 from .preresnet import *
 from .densenet import *
+from .resnext import *
+from .senet import *
 from .mobilenetv1 import *
 from .mobilenetv2 import *
 

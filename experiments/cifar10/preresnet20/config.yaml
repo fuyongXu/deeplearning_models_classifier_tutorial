@@ -32,7 +32,7 @@ mixup_alpha: 0.4
 augmentation:
   normalize: True
   random_crop: True
-  ramdom_horizontal_flip: True
+  random_horizontal_flip: True
   cutout: False
   holes: 1
   length: 8

@@ -4,7 +4,7 @@ architecture: lenet
 #log and checkpoint
 data_path: ./data
 ckpt_path: .
-data_name: lenet
+ckpt_name: lenet
 
 #datasets
 num_classes: 10
